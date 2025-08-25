@@ -1,0 +1,50 @@
+# ---------------------
+# Python
+# ---------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environment
+venv/
+.env/
+env/
+.venv/
+
+# IDE / Editor settings
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Byte-compiled files
+*.pickle
+
+# ---------------------
+# Project specific
+# ---------------------
+
+# Database config (don’t expose credentials)
+db_config.ini
+
+# Local SQLite DB (if you test with SQLite)
+*.sqlite3
+
+# Test cache (pytest, coverage, etc.)
+.pytest_cache/
+.coverage
+htmlcov/
+.cache/
