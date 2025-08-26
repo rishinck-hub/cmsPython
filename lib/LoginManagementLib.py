@@ -1,11 +1,13 @@
 from services.Auth_service import AuthService
 from lib.staffManagementLib import StaffManagementLib
-from lib.DoctorManagementLib import DoctorManagementLib
-from lib.AppointmentManagementLib import AppointmentManagementLib
-from lib.LabTestManagementLib import LabTestManagementLib
-from lib.MedicineManagementLib import MedicineManagementLib
-from lib.BillingManagementLib import BillingManagementLib
-from lib.PatientManagementLib import PatientManagementLib
+from lib.DoctorManagementLib import ConsultationManagementLib
+from lib.DoctorManagementLib import MedicinePrescriptionManagementLib
+from lib.DoctorManagementLib import LabTestPrescriptionManagementLib
+# from lib.AppointmentManagementLib import AppointmentManagementLib
+# from lib.LabTestManagementLib import LabTestManagementLib
+# from lib.MedicineManagementLib import MedicineManagementLib
+# from lib.BillingManagementLib import BillingManagementLib
+# from lib.PatientManagementLib import PatientManagementLib
 
 class LoginManagementLib:
 
@@ -18,10 +20,10 @@ class LoginManagementLib:
         result = auth_service.login(username, password)
 
         if result["success"]:
-            print(f"\n✅ Welcome {result['fullname']} (RoleID: {result['roleid']})")
+            print(f"\nWelcome {result['fullname']} (RoleID: {result['roleid']})")
             LoginManagementLib.show_dashboard(result)
         else:
-            print(f"\n❌ Login Failed: {result['message']}")
+            print(f"\nLogin Failed: {result['message']}")
 
     @staticmethod
     def show_dashboard(user):
@@ -44,19 +46,20 @@ class LoginManagementLib:
     def admin_menu():
         while True:
             print("\n--- Admin Dashboard ---")
-            print("1. Manage Staff")
-            print("2. Manage Doctors")
-            print("3. View Patients")
-            print("4. Logout")
+            print("1. display Staffs")
+            print('2. add staffs')
+            print("3. display Doctors")
+            print("4. add doctor")
+            print("5. Logout")
             choice = input("Enter choice: ")
 
             if choice == "1":
                 StaffManagementLib.display_all()
             elif choice == "2":
-                DoctorManagementLib.display_all()
-            elif choice == "3":
-                PatientManagementLib.display_all()
-            elif choice == "4":
+                StaffManagementLib.add_staff()
+            # elif choice == "3":
+                
+            elif choice == "5":
                 print("Logging out...")
                 break
             else:
@@ -73,19 +76,19 @@ class LoginManagementLib:
             print("5. Logout")
             choice = input("Enter choice: ")
 
-            if choice == "1":
-                DoctorManagementLib.view_appointments(doctorid)
-            elif choice == "2":
-                DoctorManagementLib.add_consultation(doctorid)
-            elif choice == "3":
-                DoctorManagementLib.prescribe_medicine(doctorid)
-            elif choice == "4":
-                DoctorManagementLib.prescribe_lab_test(doctorid)
-            elif choice == "5":
-                print("Logging out...")
-                break
-            else:
-                print("Invalid choice")
+            # if choice == "1":
+            #     DoctorManagementLib.view_appointments(doctorid)
+            # elif choice == "2":
+            #     DoctorManagementLib.add_consultation(doctorid)
+            # elif choice == "3":
+            #     DoctorManagementLib.prescribe_medicine(doctorid)
+            # elif choice == "4":
+            #     DoctorManagementLib.prescribe_lab_test(doctorid)
+            # elif choice == "5":
+            #     print("Logging out...")
+            #     break
+            # else:
+            #     print("Invalid choice")
 
     @staticmethod
     def receptionist_menu():
@@ -97,17 +100,17 @@ class LoginManagementLib:
             print("4. Logout")
             choice = input("Enter choice: ")
 
-            if choice == "1":
-                PatientManagementLib.add_patient()
-            elif choice == "2":
-                AppointmentManagementLib.add_appointment()
-            elif choice == "3":
-                AppointmentManagementLib.display_all()
-            elif choice == "4":
-                print("Logging out...")
-                break
-            else:
-                print("Invalid choice")
+            # if choice == "1":
+            #     PatientManagementLib.add_patient()
+            # elif choice == "2":
+            #     AppointmentManagementLib.add_appointment()
+            # elif choice == "3":
+            #     AppointmentManagementLib.display_all()
+            # elif choice == "4":
+            #     print("Logging out...")
+            #     break
+            # else:
+            #     print("Invalid choice")
 
     @staticmethod
     def labtech_menu():
@@ -118,15 +121,15 @@ class LoginManagementLib:
             print("3. Logout")
             choice = input("Enter choice: ")
 
-            if choice == "1":
-                LabTestManagementLib.view_prescriptions()
-            elif choice == "2":
-                LabTestManagementLib.add_result()
-            elif choice == "3":
-                print("Logging out...")
-                break
-            else:
-                print("Invalid choice")
+            # if choice == "1":
+            #     LabTestManagementLib.view_prescriptions()
+            # elif choice == "2":
+            #     LabTestManagementLib.add_result()
+            # elif choice == "3":
+            #     print("Logging out...")
+            #     break
+            # else:
+            #     print("Invalid choice")
 
     @staticmethod
     def pharmacist_menu():
@@ -137,12 +140,12 @@ class LoginManagementLib:
             print("3. Logout")
             choice = input("Enter choice: ")
 
-            if choice == "1":
-                MedicineManagementLib.view_prescriptions()
-            elif choice == "2":
-                MedicineManagementLib.update_stock()
-            elif choice == "3":
-                print("Logging out...")
-                break
-            else:
-                print("Invalid choice")
+            # if choice == "1":
+            #     MedicineManagementLib.view_prescriptions()
+            # elif choice == "2":
+            #     MedicineManagementLib.update_stock()
+            # elif choice == "3":
+            #     print("Logging out...")
+            #     break
+            # else:
+            #     print("Invalid choice")
