@@ -1,9 +1,5 @@
-from db.db_connection import DBConnection
+from lib.LoginManagementLib import LoginManagementLib
 
-
-def main():
-        db = DBConnection()
-        conn = db.get_connection()
-
-if __name__=='__main__':
-        main()
+if __name__ == "__main__":
+    print("=== Clinic Management System ===")
+    LoginManagementLib.login()
