@@ -25,17 +25,22 @@ class MedicineDaoService(ABC):
         """Update the medicine identified by ID; return True if successful."""
         pass
 
+    # @abstractmethod
+    # def disable(self, medicineid: int) -> bool:
+    #     """Disable (deactivate) a medicine by ID."""
+    #     pass
     @abstractmethod
-    def disable(self, medicineid: int) -> bool:
-        """Disable (deactivate) a medicine by ID."""
+    def billing(self, medicineid: int, quantity: int) -> bool:
+        """Bill a specific medicine."""
+        return True
         pass
 
-    @abstractmethod
-    def search(self, query: str) -> List[Medicine]:
-        """Search medicines by name or category—case-insensitive."""
-        pass
+    # @abstractmethod
+    # def search(self, query: str) -> List[Medicine]:
+    #     """Search medicines by name or category—case-insensitive."""
+    #     pass
 
-    @abstractmethod
-    def apply_gst(self, medicineid: int, gst_percent: float) -> bool:
-        """Apply GST to a given medicine's unit price; return True if successful."""
-        pass
+    # @abstractmethod
+    # def apply_gst(self, medicineid: int, gst_percent: float) -> bool:
+    #     """Apply GST to a given medicine's unit price; return True if successful."""
+    #     pass
