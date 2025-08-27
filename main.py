@@ -8,10 +8,10 @@ def main():
         print("|1. Add Medicine                              |")
         print("|2. Display all Medicine                      |")
         print("|3. Update Medicine                           |")
-        print("|4. Search Medicine                           |")
-        print('|5. Apply GST to Medicine                     |')
-        print('|6. Disable Medicine                          |')
-        print('|7. Delete Medicine                           |')
+        print("|4. delete Medicine                           |")
+        print('|5. search to Medicine                        |')
+        print('|6. Bill                                      |')
+        print('|7. Apply Gst Medicine                        |')
         print('|8. exit                                      |')
         print('-----------------------------------------------')
         choice = input("Enter your choice : ")
@@ -22,13 +22,13 @@ def main():
         elif choice == "3":
             MedicineManagementLib.update_medicine()
         elif choice == "4":
-            MedicineManagementLib.search_medicine()
-        elif choice == '5':
-            MedicineManagementLib.apply_gst()
-        elif choice == '6':
-            MedicineManagementLib.disable_medicine()
-        elif choice == '7':
             MedicineManagementLib.delete_medicine()
+        elif choice == '5':
+            MedicineManagementLib.search_medicine()
+        elif choice == '6':
+            MedicineManagementLib.bill_medicine()
+        elif choice == '7':
+            MedicineManagementLib.apply_gst()
         elif choice == '8':
             print("Exiting the program.")
             break

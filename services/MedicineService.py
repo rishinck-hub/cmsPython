@@ -1,3 +1,5 @@
+# services/MedicineService.py
+
 import re
 from datetime import date
 
@@ -8,31 +10,17 @@ class MedicineService:
             raise ValueError("Medicine name cannot be empty and must be a string.")
         pattern = re.compile(r"^[A-Za-z_]{2,30}$")
         if not pattern.fullmatch(medicinename):
-            raise ValueError(
-                "Medicine name must be 2–30 characters long, only letters or underscores."
-            )
+            raise ValueError("Medicine name must be 2–30 characters long, only letters or underscores.")
         return medicinename
-    # @staticmethod
-    # def parse_date_str(date_str: str) -> date:
-    #     """
-    #     Parse a date string in YYYY-MM-DD format into a date object using ISO format.
-    #     Raises ValueError with informative message if validation fails.
-    #     """
-    #     if not isinstance(date_str, str):
-    #         raise ValueError("Date must be a string in YYYY‑MM‑DD format.")
 
-    #     # Optionally validate format before parsing
-    #     # if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", date_str):
-    #     #     raise ValueError("Date must follow YYYY‑MM‑DD format exactly (e.g., 2025-08-25).")
-
-    #     try:
-    #         # Parses ISO-format date exactly
-    #         return date.fromisoformat(date_str)
-    #     except ValueError:
-    #         raise ValueError(
-    #             "Date must follow YYYY‑MM‑DD format and be a valid date."
-    #         )
-
+    @staticmethod
+    def parse_date_str(date_str: str) -> date:
+        if not isinstance(date_str, str):
+            raise ValueError("Date must be a string in YYYY-MM-DD format.")
+        try:
+            return date.fromisoformat(date_str)
+        except ValueError:
+            raise ValueError("Date must follow YYYY-MM-DD format and be a valid date.")
 
     @staticmethod
     def validate_manufacturedate(manufacturedate: date) -> date:
