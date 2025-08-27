@@ -78,6 +78,7 @@ class Staff:
             return
         else:
            print("Give the date in the correct format (dd/mm/yyyy)")
+           print("Enter dob again:")
            return
 
     def __validate_date(self, date_str: str) -> bool:
@@ -96,20 +97,32 @@ class Staff:
     def get_username(self):
         return self.__username
     def set_username(self, username):
-        if len(username) >= 6:
+         if (len(username) >= 6 and
+            re.search(r'[A-Za-z]', username) and
+            re.search(r'\d', username) and
+            re.search(r'[^A-Za-z0-9]', username) and
+            username != "=" * len(username)):
             self.__username = username
-        else:
-            print("Username should have at least 6 characters")
-            username = input("Enter username again:")
+         else:
+            print(" Username should have at least 6 characters, "
+                  "contain letters, numbers, and a special character")
+            username = input("Enter username again: ")
+            self.set_username(username)
 
     def get_password(self):
         return self.__password
     def set_password(self, password):
-        if len(password) >= 6:
+        if (len(password) >= 6 and
+            re.search(r'[A-Za-z]', password) and
+            re.search(r'\d', password) and
+            re.search(r'[^A-Za-z0-9]', password) and
+            password != "=" * len(password)):
             self.__password = password
         else:
-            print("Password should have at least 6 characters")
-            password = input("Enter password again:")
+            print(" Password should have at least 6 characters, "
+                  "contain letters, numbers, and a special character ")
+            password = input("Enter password again: ")
+            self.set_password(password)
 
     def get_roleid(self):
         return self.__roleid
