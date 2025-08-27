@@ -13,6 +13,8 @@ class StaffDaoImplementation(StaffDaoService):
     def __init__(self):
         self.conn = DBConnection().get_connection()
 
+
+
     def insert_staff(self,staff:Staff)->bool:
         try:
             cursor = self.conn.cursor()
@@ -34,8 +36,8 @@ class StaffDaoImplementation(StaffDaoService):
             ))
             self.conn.commit()
             if cursor.rowcount == 1:
-              staff_id = cursor.lastrowid   # ✅ get auto-generated staffid
-              staff.set_staffid(staff_id)   # ✅ set in staff object
+              staff_id = cursor.lastrowid   
+              staff.set_staffid(staff_id)   
               return True
             return False
         except Exception as e:
@@ -101,6 +103,51 @@ class StaffDaoImplementation(StaffDaoService):
           return None
         finally:
            cursor.close()
+
+    def update_staff_name(self, staff: Staff) -> bool:
+        try:
+          cursor = self.conn.cursor()
+          query = "UPDATE staffs SET fullname = %s WHERE staffid = %s"
+          values = (staff.get_fullname(), staff.get_staffid())
+          cursor.execute(query, values)
+          self.conn.commit()
+          return True
+        except Exception as e:
+           print("Error updating staff name:", e)
+           return False
+        finally:
+           cursor.close()
+
+
+    def update_staff_mobileno(self, staff: Staff) -> bool:
+        try:
+          cursor = self.conn.cursor()
+          query = "UPDATE staffs SET mobileno = %s WHERE staffid = %s"
+          values = (staff.get_mobileno(), staff.get_staffid())
+          cursor.execute(query, values)
+          self.conn.commit()
+          return True
+        except Exception as e:
+          print("Error updating staff mobile no:", e)
+          return False
+        finally:
+          cursor.close()
+
+    def disable_staff(self, staffid: int) -> bool:
+        try:
+          cursor = self.conn.cursor()
+          query = "UPDATE staffs SET isactive = 'N' WHERE staffid = %s"
+          values = (staffid,)
+          cursor.execute(query, values)
+          self.conn.commit()
+          return True
+        except Exception as e:
+          print("Error disabling staff:", e)
+          return False
+        finally:
+          cursor.close()
+
+
 
     
 
