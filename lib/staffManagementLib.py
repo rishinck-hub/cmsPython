@@ -6,7 +6,7 @@ from models.Staff import Staff
 class StaffManagementLib:
 
     dao_service:StaffDaoService = StaffDaoImplementation()
-
+    
     @staticmethod
     def add_staff():
         staff = Staff()
@@ -24,7 +24,7 @@ class StaffManagementLib:
         staff.set_username(username)
         password = input("Enter Password (min 6 chars): ")
         staff.set_password(password)
-        roleid = input("Enter Role ID (1.Admin 2.Doctor, 3.Receptionalist, 4.Pharmacist): ")
+        roleid = input("Enter Role ID (1.Admin, 2.Doctor, 3.Receptionalist, 4.Pharmacist): ")
         staff.set_roleid(roleid)
         staff.set_isactive(isactive="Y")
 
@@ -77,15 +77,21 @@ class StaffManagementLib:
         print(" Updated successfully!")
         return True
     
-    staticmethod
-    def edit_staff_name(staff, new_name):
-        if len(new_name) < 3:
-            print(" Name must have at least 3 characters")
-            return False
+    @staticmethod
+    def update_staff_mobileno(staff, new_mobile):
+     if not (new_mobile.isdigit() and len(new_mobile) == 10):
+        print(" Mobile number must be exactly 10 digits")
+        return False
 
-        staff.set_fullname(new_name)
-        StaffManagementLib.dao_service.update_staff_name(staff)
-        print(" Name updated successfully!")
+     staff.set_mobileno(new_mobile)
+
+     if StaffManagementLib.dao_service.update_staff_mobileno(staff):
+        print(" Mobile number updated successfully!")
         return True
+     else:
+        print(" Failed to update mobile number in DB")
+        return False
+
+    
     
     
