@@ -1,9 +1,9 @@
 from lib.AppointmentManagementLib import AppointmentManagementLib
 
 class Appointment:
-    def __init__(self, appointment_id: int, date: str, token_no: int, status: str, patient_id: int, doctor_id: int):
+    def __init__(self, appointment_id: int | None, date: str, token_no: int, status: str, patient_id: int, doctor_id: int):
         # Validate all parameters before setting them
-        if not AppointmentManagementLib.validate_appointment_id(appointment_id):
+        if appointment_id is not None and not AppointmentManagementLib.validate_appointment_id(appointment_id):
             raise ValueError("Invalid appointment ID")
         if not AppointmentManagementLib.validate_date(date):
             raise ValueError("Invalid appointment date")
@@ -24,6 +24,10 @@ class Appointment:
         self.__doctorid = doctor_id
 
     def get_appointmentid(self): return self.__appointmentid
+    def set_appointmentid(self, appointment_id):
+        if not AppointmentManagementLib.validate_appointment_id(appointment_id):
+            raise ValueError("Invalid appointment ID")
+        self.__appointmentid = appointment_id
     def get_date(self): return self.__date
     def get_tokenno(self): return self.__tokenno
     def get_status(self): return self.__status

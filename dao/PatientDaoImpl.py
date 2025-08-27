@@ -102,12 +102,134 @@ class PatientDaoImpl(PatientDao):
             return None
         return None
 
-    def list_patients(self):
+    def get_patient_by_id(self, patient_id):
+        cursor = None
+        try:
+            cursor = self.conn.cursor(dictionary=True)
+            cursor.execute("SELECT * FROM patients WHERE patientid = %s", (patient_id,))
+            row = cursor.fetchone()
+            if row:
+                # Normalize DB values to match validators
+                raw_dob = row.get("dob")
+                if isinstance(raw_dob, (datetime, date)):
+                    dob_str = raw_dob.strftime("%Y-%m-%d")
+                else:
+                    dob_str = str(raw_dob) if raw_dob is not None else ""
+
+                mobileno_str = str(row.get("mobileno", ""))
+                gender_str = str(row.get("gender", "")).strip()
+                bloodgroup_str = str(row.get("bloodgroup", "")).strip()
+                is_active_bool = True if str(row.get("isactive", "y")).lower() in ("y", "true", "1") else False
+
+                # Fallbacks for legacy/nullable data
+                if not PatientManagementLib.validate_dob(dob_str):
+                    dob_str = "1970-01-01"
+                if not PatientManagementLib.validate_gender(gender_str):
+                    gender_str = "other"
+                if not PatientManagementLib.validate_bloodgroup(bloodgroup_str):
+                    bloodgroup_str = "O+"
+                if not PatientManagementLib.validate_mobile(mobileno_str):
+                    mobileno_str = "6000000000"
+                address_str = row.get("address", "") or ""
+                if not PatientManagementLib.validate_address(address_str):
+                    address_str = "Unknown Address"
+
+                return Patient(
+                    row["patientid"],
+                    row["name"],
+                    dob_str,
+                    gender_str,
+                    bloodgroup_str,
+                    mobileno_str,
+                    address_str,
+                    is_active_bool,
+                )
+        except Exception as e:
+            print("Error fetching patient:", e)
+        finally:
+            if cursor:
+                cursor.close()
+        return None
+
+    def delete_patient(self, patient_id):
+        cursor = None
+        try:
+            cursor = self.conn.cursor()
+            # Update isactive to 'n' for soft delete
+            cursor.execute("UPDATE patients SET isactive = 'n' WHERE patientid = %s AND isactive = 'y'", (patient_id,))
+            self.conn.commit()
+            return cursor.rowcount == 1
+        except Exception as e:
+            print("Error deactivating patient:", e)
+            self.conn.rollback()
+            return False
+        finally:
+            if cursor:
+                cursor.close()
+
+    def update_patient(self, patient):
+        cursor = None
+        try:
+            cursor = self.conn.cursor()
+            cursor.execute(
+                """UPDATE patients 
+                   SET name = %s, dob = %s, gender = %s, bloodgroup = %s, 
+                       mobileno = %s, address = %s, isactive = %s 
+                   WHERE patientid = %s""",
+                (
+                    patient.get_name(),
+                    patient.get_dob(),
+                    patient.get_gender(),
+                    patient.get_bloodgroup(),
+                    patient.get_mobileno(),
+                    patient.get_address(),
+                    'y' if patient.get_isactive() else 'n',
+                    patient.get_patientid(),
+                ),
+            )
+            self.conn.commit()
+            return cursor.rowcount == 1
+        except Exception as e:
+            print("Error updating patient:", e)
+            self.conn.rollback()
+            return False
+        finally:
+            if cursor:
+                cursor.close()
+
+    def update_patient_status(self, patient_id, is_active):
+        """Update the active status of a patient"""
+        cursor = None
+        try:
+            cursor = self.conn.cursor()
+            cursor.execute(
+                "UPDATE patients SET isactive = %s WHERE patientid = %s",
+                ('y' if is_active else 'n', patient_id)
+            )
+            self.conn.commit()
+            return cursor.rowcount > 0
+        except Exception as e:
+            print(f"Error updating patient status: {e}")
+            self.conn.rollback()
+            return False
+        finally:
+            if cursor:
+                cursor.close()
+
+    def list_patients(self, include_inactive=False):
         cursor = None
         patients = []
         try:
             cursor = self.conn.cursor(dictionary=True)
-            cursor.execute(self.SELECT_ALL_SQL)
+            if include_inactive:
+                cursor.execute(self.SELECT_ALL_SQL)
+            else:
+                cursor.execute("""
+                    SELECT patientid, name, dob, gender, bloodgroup, mobileno, address, isactive 
+                    FROM patients 
+                    WHERE isactive = 'y' 
+                    ORDER BY patientid
+                """)
             rows = cursor.fetchall()
             for r in rows:
                 # Normalize DB values to match validators
@@ -120,7 +242,7 @@ class PatientDaoImpl(PatientDao):
                 mobileno_str = str(r.get("mobileno", ""))
                 gender_str = str(r.get("gender", "")).strip()
                 bloodgroup_str = str(r.get("bloodgroup", "")).strip()
-                is_active_bool = True if str(r.get("isactive", "y")).lower() in ("y", "true", "1") else False
+                is_active_bool = str(r.get("isactive", "y")).lower() in ("y", "true", "1")
 
                 # Fallbacks for legacy/nullable data to avoid listing failures
                 if not PatientManagementLib.validate_dob(dob_str):

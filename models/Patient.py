@@ -77,5 +77,6 @@ class Patient:
     def __str__(self):
         return (
             f"Patient[ID={self.__patientid}, Name={self.__name}, Gender={self.__gender}, "
-            f"BloodGroup={self.__bloodgroup}, Mobile={self.__mobileno}, Address={self.__address}]"
+            f"BloodGroup={self.__bloodgroup}, Mobile={self.__mobileno}, Address={self.__address}, "
+            f"Active={'Yes' if self.__isactive else 'No'}]"
         )
