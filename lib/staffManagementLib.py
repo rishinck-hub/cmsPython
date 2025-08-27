@@ -24,7 +24,7 @@ class StaffManagementLib:
         staff.set_username(username)
         password = input("Enter Password (min 6 chars): ")
         staff.set_password(password)
-        roleid = input("Enter Role ID (1.Doctor, 2.Receptionalist, 3.Pharmacist): ")
+        roleid = input("Enter Role ID (1.Admin 2.Doctor, 3.Receptionalist, 4.Pharmacist): ")
         staff.set_roleid(roleid)
         staff.set_isactive(isactive="Y")
 

@@ -9,7 +9,85 @@ from dao.LabTestPrescriptionDaoImpl import LabTestPrescriptionDaoImplementation
 from models.LabTestPrescription import LabTestPrescription
 from services.ConsultationService import LabTestPrescriptionValidation
 from services.ConsultationService import ConsultationValidation
-from datetime import datetime
+from datetime import datetime ,date
+'''Appointment Management lib'''
+class DoctorManagementLib:
+    'Handles CRUD logic'
+    dao_service:ConsultationDaoService = ConsultationDaoImplementation()
+
+    # @staticmethod
+    # def generate_doctor_id():
+    #     new_id = Doctor.doctor_id_gen()
+    #     return new_id
+
+    @staticmethod
+    def view_appointments(doctor_id):
+        try:
+            # doctor_id = input("Enter Doctor ID to view appointments : ")
+            appointmets = DoctorManagementLib.dao_service.view_appointments(doctor_id)
+            if appointmets:
+                print(f"-"*47)
+                print(f"|Appointments for Doctor ID : {doctor_id}     ")
+                for app in appointmets:
+                    print(f"-"*47)
+                    print(f"|Appointment ID  : {app.get('appointmentid')}  ")
+                    print(f"|Patient ID      : {app.get('patientid')}     ")
+                    print(f"|Token No        : {app.get('tokenno')}          ")
+                    print(f"|Appointment Date: {app.get('date')}")
+                    print(f"-"*47)
+            else:
+                print("No appointments found for this doctor!")
+        except ValueError:
+            print("Invalid input! Doctor ID must be a number!")
+        except Exception as e:
+            print("Error viewing appointments : ",e)
+
+    @staticmethod
+    def get_todays_appointments(doctor_id):
+        try:
+            appointments = DoctorManagementLib.dao_service.view_appointments(doctor_id)
+            today = date.today()   # today's date object
+
+            todays_appointments = []
+            for app in appointments:
+                app_date = app.get('date')
+
+                # Case 1: Already a datetime
+                if isinstance(app_date, datetime):
+                    app_date = app_date.date()
+
+                # Case 2: Already a date
+                elif isinstance(app_date, date):
+                    pass  # keep as is
+
+                # Case 3: String (e.g., '2025-08-27')
+                elif isinstance(app_date, str):
+                    app_date = datetime.strptime(app_date, "%Y-%m-%d").date()
+
+                if app_date == today:
+                    todays_appointments.append(app)
+
+            # print results before returning
+            if todays_appointments:
+                print(f"-"*47)
+                print(f"| Today's Appointments for Doctor ID : {doctor_id} ")
+                for app in todays_appointments:
+                    print(f"-"*47)
+                    print(f"| Appointment ID  : {app.get('appointmentid')}")
+                    print(f"| Patient ID      : {app.get('patientid')}")
+                    print(f"| Token No        : {app.get('tokenno')}")
+                    print(f"| Appointment Date: {app.get('date')}")
+                    print(f"-"*47)
+            else:
+                print("No appointments found for today!")
+
+            return todays_appointments
+
+        except ValueError:
+            print("Invalid input! Doctor ID must be a number!")
+        except Exception as e:
+            print("Error viewing today's appointments:", e)
+
 
 '''Consulatation operations'''
 class ConsultationManagementLib:
@@ -26,28 +104,6 @@ class ConsultationManagementLib:
     def add_consultation():
         try:
             while True:
-                symptoms = input("Enter Symptoms: ")
-                if ConsultationValidation.validate_symptoms(symptoms):
-                    break
-                else:
-                    print("Invalid Symptoms! Cannot be empty.")
-
-            while True:
-                diagnosis = input("Enter Diagnosis: ")
-                if ConsultationValidation.validate_diagnosis(diagnosis):
-                    break
-                else:
-                    print("Invalid Diagnosis! Cannot be empty.")
-
-            while True:
-                date_str = input("Enter Created Date (dd/mm/yyyy): ")
-                if ConsultationValidation.validate_date_string(date_str):
-                    created_date = datetime.strptime(date_str, "%d/%m/%Y").date()
-                    break
-                else:
-                    print("Invalid Date! Must be in format dd/mm/yyyy and not in the future.")
-
-            while True:
                 try:
                     appointment_id = int(input("Enter Appointment ID: "))
                     if ConsultationValidation.validate_appointment_id(appointment_id):
@@ -56,6 +112,28 @@ class ConsultationManagementLib:
                         print("Invalid Appointment ID! Must be a positive integer.")
                 except Exception:
                     print("Appointment ID must be an integer.")
+            while True:
+                symptoms = input("Enter Symptoms: ")
+                break
+                # if ConsultationValidation.validate_symptoms(symptoms):
+                #     break
+                # else:
+                #     print("Invalid Symptoms! Cannot be empty.")
+
+            while True:
+                diagnosis = input("Enter Diagnosis: ")
+                if ConsultationValidation.validate_diagnosis(diagnosis):
+                    break
+                else:
+                    print("Invalid Diagnosis! Cannot be empty.")
+
+            # while True:
+            created_date = date.today()
+                # if ConsultationValidation.validate_date_string(date_str):
+                #     created_date = datetime.strptime(date_str, "%d/%m/%Y").date()
+                #     break
+                # else:
+                #     print("Invalid Date! Must be in format dd/mm/yyyy and not in the future.")
 
             consultation = Consultation(
                 symptoms=symptoms,
@@ -448,3 +526,4 @@ class LabTestPrescriptionManagementLib:
             print("Prescription not found!")
             return
         print(prescription)
+

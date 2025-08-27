@@ -15,17 +15,19 @@ class AuthService:
 
         # 🔑 Plain-text password check
         if password == staff["password"]:
-            # If doctor, also fetch doctorid
-            if staff["roleid"] == 2:
-                conn = DBConnection.get_connection()
-                cursor = conn.cursor(dictionary=True)
-                cursor.execute("SELECT doctorid FROM doctors WHERE staffid = %s", (staff["staffid"],))
-                doctor = cursor.fetchone()
-                cursor.close()
-                conn.close()
+        #     # If doctor, also fetch doctorid
+        #     if staff["roleid"] == 2:
+        #         conn = DBConnection().get_connection()
+        #         cursor = conn.cursor(dictionary=True)
+        #         cursor.execute("SELECT doctorid FROM doctors WHERE staffid = %s", (staff["staffid"],))
+        #         doctor = cursor.fetchone()
+        #         cursor.close()
+        #         conn.close()
 
-                if doctor:
-                    staff["doctorid"] = doctor["doctorid"]
+        #         if doctor:
+        #             staff["doctorid"] = doctor["doctorid"]
+        #         else:  
+        #             doctor["doctorid"]                 
 
             return {
                 "success": True,

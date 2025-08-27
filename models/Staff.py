@@ -46,22 +46,26 @@ class Staff:
     def get_bloodgroup(self):
         return self.__bloodgroup
     def set_bloodgroup(self, bloodgroup):
-        valid_bloodgroups = {"A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"}
-        bloodgroup = bloodgroup.upper()  # normalize
-        if bloodgroup in valid_bloodgroups:
-          self.__bloodgroup = bloodgroup
-        else:
-          print("Invalid blood group! Please enter one of:", ", ".join(valid_bloodgroups))
-          bloodgroup = input("Enter Blood Group again:")
+        while True:
+            valid_bloodgroups = {"A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"}
+            bloodgroup = bloodgroup.upper()  # normalize
+            if bloodgroup in valid_bloodgroups:
+                self.__bloodgroup = bloodgroup
+                break
+            else:
+                print("Invalid blood group! Please enter one of:", ", ".join(valid_bloodgroups))
+                bloodgroup = input("Enter Blood Group again:")
 
     def get_mobileno(self):
         return self.__mobileno
     def set_mobileno(self, mobileno):
-        if re.fullmatch(r"[6-9]\d{9}", str(mobileno)):
-           self.__mobileno = mobileno
-        else:
-           print("Invalid mobile number! It must start with 6-9 and have exactly 10 digits.")
-           mobileno = input("Enter mobile no again:")
+        while True:
+            if re.fullmatch(r"[6-9]\d{9}", str(mobileno)):
+                self.__mobileno = mobileno
+                break
+            else:
+                print("Invalid mobile number! It must start with 6-9 and have exactly 10 digits.")
+                mobileno = input("Enter mobile no again:")
 
     def get_dob(self):
         return self.__dob
