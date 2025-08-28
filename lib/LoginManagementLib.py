@@ -65,7 +65,7 @@ class LoginManagementLib:
             else:
                 print("Invalid choice")
 
-    @staticmethod
+    @staticmethod 
     def doctor_menu(doctorid):
         while True:
             print("\n--- Doctor Dashboard ---")
