@@ -7,6 +7,8 @@ from db.db_connection import DBConnection
 
 class MedicineDaoDb(MedicineDaoService):
     # SQL Query Templates
+    SEARCH_MEDICINE = "SELECT * FROM medicines WHERE medicinename LIKE %s OR CAST(medicineid AS CHAR) LIKE %s"
+
     BILL_MEDICINE = "CALL bill_medicine(%s, %s)"
     DISABLE_MEDICINE = "UPDATE medicines SET is_active = 0 WHERE medicineid = %s"
     DELETE="DELETE FROM medicines WHERE medicineid = %s"
@@ -141,8 +143,7 @@ class MedicineDaoDb(MedicineDaoService):
             return False
         finally:
             cursor.close()
-
-
+   
     # def disable(self, medicineid: int) -> bool:
     #     cursor = self.conn.cursor()
     #     try:
@@ -155,29 +156,28 @@ class MedicineDaoDb(MedicineDaoService):
     #     finally:
     #         cursor.close()
 
-    # def search(self, query: str) -> List[Medicine]:
-    #     meds, cursor = [], self.conn.cursor(dict)
-    #     try:
-    #         pattern = f"%{query}%"
-    #         cursor.execute(self.SEARCH_MEDICINE, (pattern, pattern))
-    #         for row in cursor.fetchall():
-    #             meds.append(Medicine(
-    #                 medicineid=row["medicineid"],
-    #                 medicinename=row["medicinename"],
-    #                  manufacturedate=row["manufacturedate"],
-    #                  expirydate=row["expirydate"],
-    #                 unitquantiy=row["unitquantiy"],
-    #                  unitid=row["unitid"],
-    #                  unitprice=row["unitprice"],
-                    
-                    
-    #                 medicinecategoryid=row["medicinecategoryid"],
-    #             ))
-    #     except Exception as e:
-    #         print(f"Search error: {e}")
-    #     finally:
-    #         cursor.close()
-    #     return meds
+    def search(self, query: str) -> List[Medicine]:  # Use string literal if Medicine isn't defined yet
+        meds = []
+        cursor = self.conn.cursor(dictionary=True)  # Use dictionary=True for row access by column name
+        try:
+            pattern = f"%{query}%"
+            cursor.execute(self.SEARCH_MEDICINE, (pattern, pattern))
+            for row in cursor.fetchall():
+                meds.append(Medicine(
+                    medicineid=row["medicineid"],
+                    medicinename=row["medicinename"],
+                    manufacturedate=row["manufacturedate"],
+                    expirydate=row["expirydate"],
+                    unitquantiy=row["unitquantiy"],  # double check this spelling!
+                    unitid=row["unitid"],
+                    unitprice=row["unitprice"],
+                    medicinecategoryid=row["medicinecategoryid"],
+                ))
+        except Exception as e:
+            print(f"Search error: {e}")
+        finally:
+            cursor.close()
+        return meds
 
     # def apply_gst(self, medicineid: int, gst_percent: float) -> bool:
     #     cursor = self.conn.cursor()
