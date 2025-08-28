@@ -100,17 +100,47 @@ class AppointmentService:
                 print("Error: Invalid status! Please enter Pending, Cancelled, or Completed.")
                 print("Please try again.\n")
 
-            # Get and validate patient ID and existence
+            # Get and validate patient ID, existence, and active status
             while True:
                 patient_id_input = input("Enter Patient ID: ").strip()
-                if AppointmentManagementLib.validate_patient_id(patient_id_input):
-                    patient_id = int(patient_id_input)
-                    if AppointmentService._record_exists("patients", "patientid", patient_id):
-                        break
-                    print("Error: Patient ID does not exist. Please enter a valid Patient ID.")
-                else:
+                if not AppointmentManagementLib.validate_patient_id(patient_id_input):
                     print("Error: Invalid patient ID! Please enter a positive integer.")
-                print("Please try again.\n")
+                    print("Please try again.\n")
+                    continue
+                    
+                patient_id = int(patient_id_input)
+                
+                # Check if patient exists and is active
+                conn = DBConnection().get_connection()
+                cursor = None
+                try:
+                    cursor = conn.cursor()
+                    cursor.execute(
+                        "SELECT isactive FROM patients WHERE patientid = %s",
+                        (patient_id,)
+                    )
+                    result = cursor.fetchone()
+                    
+                    if result is None:
+                        print("Error: Patient ID does not exist. Please enter a valid Patient ID.")
+                        print("Please try again.\n")
+                        continue
+                        
+                    is_active = result[0] == 'y' or result[0] is True
+                    if not is_active:
+                        print("Error: This patient is currently inactive and cannot book appointments.")
+                        print("Please activate the patient first using the Patient Management menu.")
+                        print("Please try again or select a different patient.\n")
+                        continue
+                        
+                    break  # Valid active patient
+                        
+                except Exception as e:
+                    print(f"Error checking patient status: {e}")
+                    print("Please try again.\n")
+                finally:
+                    if cursor:
+                        cursor.close()
 
             # Get and validate doctor ID and existence
             while True:
@@ -259,7 +289,7 @@ class AppointmentService:
             if success:
                 print(f"Appointment with ID {appointment.get_appointmentid()} updated successfully.")
             else:
-                print(f"Failed to update appointment with ID {appointment.get_appointmentid()}.")
+                print(f"No update for appointment with ID {appointment.get_appointmentid()}.")
                 
         except Exception as e:
             print(f"Error updating appointment: {e}")
