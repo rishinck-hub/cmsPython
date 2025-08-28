@@ -1,9 +1,9 @@
-from dao.StaffDaoImpl import StaffDaoImplementation
+from dao.LoginDaoImpl import LoginDaoImplementation
 from db.db_connection import DBConnection
 
 class AuthService:
     def __init__(self):
-        self.staff_dao = StaffDaoImplementation()
+        self.staff_dao = LoginDaoImplementation()
 
     def login(self, username: str, password: str):
         staff = self.staff_dao.get_staff_by_username(username)
