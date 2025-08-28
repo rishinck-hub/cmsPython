@@ -14,7 +14,7 @@ class ConsultationDaoImplementation(ConsultationDaoService):
         WHERE consultationid=%s"""
     DELETE_CONSULTATION = "DELETE FROM consultations WHERE consultationid=%s"
     DISPLAY_CONSULTATION = "SELECT * FROM consultations WHERE consultationid=%s"
-
+    VIEW_APPOINTMENTS = "SELECT * FROM appointments WHERE doctorid=%s"
     def __init__(self):
         self.conn = DBConnection().get_connection()
 
@@ -114,5 +114,21 @@ class ConsultationDaoImplementation(ConsultationDaoService):
         except Exception as e:
             print("Error displaying consultation:", e)
             return None
+        finally:
+            cursor.close()
+    
+
+    def view_appointments(self, doctor_id:int):
+        try:
+            # appointments = []
+            cursor = self.conn.cursor(dictionary=True)
+            cursor.execute(self.VIEW_APPOINTMENTS,(doctor_id, ))
+            rows = cursor.fetchall()
+            # for row in rows:
+            #     appointments.append()4
+            return rows
+        except Exception as e:
+            print("Error viewing appointments : ",e)
+            return[]
         finally:
             cursor.close()

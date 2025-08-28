@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 from models.Consultation import Consultation
+from models.Appointment import Appointment
 
 class ConsultationDaoService(ABC):
     @abstractmethod
@@ -32,3 +33,6 @@ class ConsultationDaoService(ABC):
     def display_consultation(self, consultation: Consultation, consultation_id: int) -> Consultation:
         '''Display a consultation'''
         pass
+    @abstractmethod
+    def view_appointments(self,doctor_id:int)-> List[Appointment]:
+        '''display doctor specific appointment'''

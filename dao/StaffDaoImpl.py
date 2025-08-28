@@ -108,15 +108,6 @@ class StaffDaoImplementation(StaffDaoService):
         # conn = DBConnection.get_connection()
         cursor = self.conn.cursor(dictionary=True)
 
-<<<<<<< HEAD
-        query = "SELECT staffid, fullname, username, password, roleid, isactive FROM staffs WHERE username = %s"
-        cursor.execute(query, (username,))
-        result = cursor.fetchone()
-
-        cursor.close()
-        # conn.close()
-        return result    
-=======
     def update_staff_name(self, staff: Staff) -> bool:
         try:
           cursor = self.conn.cursor()
@@ -163,7 +154,6 @@ class StaffDaoImplementation(StaffDaoService):
 
 
     
->>>>>>> adminmegha
 
 
         
