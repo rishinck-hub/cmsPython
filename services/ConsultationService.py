@@ -7,16 +7,20 @@ class ConsultationValidation:
     def validate_consultation_id(consultation_id):
         if consultation_id is None or not isinstance(consultation_id, int) or consultation_id <= 0:
             raise ValueError("Consultation ID must be a positive integer.")
+        return consultation_id
+
 
     @staticmethod
     def validate_symptoms(symptoms):
         if not symptoms or not isinstance(symptoms, str):
             raise ValueError("Symptoms must be a non-empty string.")
+        return symptoms
 
     @staticmethod
     def validate_diagnosis(diagnosis):
         if not diagnosis or not isinstance(diagnosis, str):
             raise ValueError("Diagnosis must be a non-empty string.")
+        return diagnosis
 
     @staticmethod
     def validate_created_date(created_date):
@@ -26,6 +30,7 @@ class ConsultationValidation:
             raise ValueError("Created date must be a valid date object.")
         if created_date > date.today():
             raise ValueError("Created date cannot be in the future.")
+        return created_date
 
     @staticmethod
     def validate_appointment_id(appointment_id):

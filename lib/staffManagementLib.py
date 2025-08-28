@@ -6,7 +6,6 @@ from models.Doctor import Doctor
 from dao.DoctorDao import DoctorDaoService
 from dao.DoctorDaoImpl import DoctorDaoImplementation
 
-
 class StaffManagementLib:
 
     dao_service:StaffDaoService = StaffDaoImplementation()
@@ -95,8 +94,9 @@ class StaffManagementLib:
      else:
         print(" Failed to update mobile number in DB")
         return False
+     
 
-class DoctorManagementLib:
+class DoctorManageLib:
     dao_service: DoctorDaoService = DoctorDaoImplementation()
 
 
@@ -119,7 +119,7 @@ class DoctorManagementLib:
 
         doctor.isactive = "Y"
 
-        if DoctorManagementLib.dao_service.insert_doctor(doctor):
+        if DoctorManageLib.dao_service.insert_doctor(doctor):
             print(f" Successfully Added Doctor: DOCTOR ID: {doctor.doctorid}")
         else:
             print(" Something went wrong while adding doctor...")
@@ -127,7 +127,7 @@ class DoctorManagementLib:
     @staticmethod
     def list_doctors():
         """List all doctors"""
-        doctors = DoctorManagementLib.dao_service.display_all_doctors()
+        doctors = DoctorManageLib.dao_service.display_all_doctors()
         if not doctors:
             print(" No doctors found")
             return []
@@ -145,7 +145,7 @@ class DoctorManagementLib:
             print(" Invalid Doctor ID! Must be a number.")
             return None
 
-          doctor = DoctorManagementLib.dao_service.find_by_id(int(doctor_id))
+          doctor = DoctorManageLib.dao_service.find_by_id(int(doctor_id))
           if doctor:
             print("\n ========= Doctor Found =========")
             print(doctor)   
@@ -169,14 +169,14 @@ class DoctorManagementLib:
             return False
 
            doctor_id = int(doctor_id)
-           doctor = DoctorManagementLib.dao_service.find_by_id(doctor_id)
+           doctor = DoctorManageLib.dao_service.find_by_id(doctor_id)
            if not doctor:
             print(" Doctor not found!")
             return False
 
            doctor.isactive = "N"
 
-           if DoctorManagementLib.dao_service.disable_doctor(doctor.doctorid):
+           if DoctorManageLib.dao_service.disable_doctor(doctor.doctorid):
             print(" Doctor disabled successfully!")
             return True
            else:
@@ -188,5 +188,7 @@ class DoctorManagementLib:
         return False
 
 
+
+    
     
     
