@@ -2,6 +2,37 @@ from dao.PatientDaoImpl import PatientDaoImpl
 from models.Patient import Patient
 from lib.PatientManagementLib import PatientManagementLib
 
+class PatientMenu:
+    @staticmethod
+    def show_menu():
+        """Patient Management submenu"""
+        while True:
+            print("\n" + "="*50)
+            print("           PATIENT MANAGEMENT SYSTEM")
+            print("="*50)
+            print("1. Add Patient")
+            print("2. List Patients")
+            print("3. Active/Inactive Patient Management")
+            print("4. Update Patient")
+            print("0. Return to Main Menu")
+            print("-"*50)
+            
+            choice = input("Enter your choice (0-4): ").strip()
+            
+            if choice == '1':
+                PatientService.add_patient()
+            elif choice == '2':
+                PatientService.list_patients()
+            elif choice == '3':
+                PatientService.manage_patient_status()
+            elif choice == '4':
+                PatientService.update_patient()
+            elif choice == '0':
+                print("Returning to main menu...")
+                break
+            else:
+                print("❌ Invalid choice. Please enter a number between 0 and 4.")
+
 class PatientService:
     dao = PatientDaoImpl()
     patient_counter = 1

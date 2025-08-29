@@ -3,10 +3,10 @@ from datetime import datetime
 class AppointmentManagementLib:
     @staticmethod
     def validate_status(status):
-        """Validate appointment status (pending, cancelled, completed)"""
+        """Validate appointment status (scheduled, pending, cancelled, completed, no-show, confirmed)"""
         if not status or not isinstance(status, str):
             return False
-        valid_statuses = ["pending", "cancelled", "completed"]
+        valid_statuses = ["scheduled", "pending", "cancelled", "completed", "no-show", "confirmed"]
         return status.lower() in valid_statuses
 
     @staticmethod

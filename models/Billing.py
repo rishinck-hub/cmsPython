@@ -1,116 +1,46 @@
-# models/bill.py
-
-from datetime import datetime
-
 class Bill:
-    """
-    A class representing a billing record including medicine billing and related details.
-    """
+    def __init__(self, bill_id, patient_id, appointment_id, medicine_prescription_id, labtest_prescription_id, 
+                 consultation_fee=500.00, medicine_cost=0.00, labtest_cost=0.00, total_amount=None):
+        self.__bill_id = bill_id
+        self.__patient_id = patient_id
+        self.__appointment_id = appointment_id
+        self.__medicine_prescription_id = medicine_prescription_id
+        self.__labtest_prescription_id = labtest_prescription_id
+        self.__consultation_fee = consultation_fee
+        self.__medicine_cost = medicine_cost
+        self.__labtest_cost = labtest_cost
+        # Total amount is calculated automatically if not provided
+        self.__total_amount = total_amount if total_amount is not None else (consultation_fee + medicine_cost + labtest_cost)
 
-    def __init__(
-        self,
-        billingid=None,
-        patientid=None,
-        appointmentid=None,
-        medicineprescriptionid=None,
-        labtestprescriptionid=None,
-        consultationfee=0.0,
-        medicineamount=0.0,
-        labtestamount=0.0,
-        totalamount=0.0
-    ):
-        self._billingid = billingid
-        self._patientid = patientid
-        self._appointmentid = appointmentid
-        self._medicineprescriptionid = medicineprescriptionid
-        self._labtestprescriptionid = labtestprescriptionid
-        self.consultationfee = consultationfee
-        self.medicineamount = medicineamount
-        self.labtestamount = labtestamount
-        self._date = datetime.now()
+    # Getters
+    def get_bill_id(self): return self.__bill_id
+    def get_patient_id(self): return self.__patient_id
+    def get_appointment_id(self): return self.__appointment_id
+    def get_medicine_prescription_id(self): return self.__medicine_prescription_id
+    def get_labtest_prescription_id(self): return self.__labtest_prescription_id
+    def get_consultation_fee(self): return self.__consultation_fee
+    def get_medicine_cost(self): return self.__medicine_cost
+    def get_labtest_cost(self): return self.__labtest_cost
+    def get_total_amount(self): return self.__total_amount
 
-    # billingid property
-    @property
-    def billingid(self):
-        return self._billingid
+    # Setters
+    def set_consultation_fee(self, consultation_fee): 
+        self.__consultation_fee = consultation_fee
+        self.__calculate_total()
+    def set_medicine_cost(self, medicine_cost): 
+        self.__medicine_cost = medicine_cost
+        self.__calculate_total()
+    def set_labtest_cost(self, labtest_cost): 
+        self.__labtest_cost = labtest_cost
+        self.__calculate_total()
+    def set_total_amount(self, total_amount): self.__total_amount = total_amount
 
-    @billingid.setter
-    def billingid(self, value):
-        self._billingid = value
-
-    # patientid property
-    @property
-    def patientid(self):
-        return self._patientid
-
-    @patientid.setter
-    def patientid(self, value):
-        self._patientid = value
-
-    # appointmentid property
-    @property
-    def appointmentid(self):
-        return self._appointmentid
-
-    @appointmentid.setter
-    def appointmentid(self, value):
-        self._appointmentid = value
-
-    # consultationfee property
-    @property
-    def consultationfee(self):
-        return self._consultationfee
-
-    @consultationfee.setter
-    def consultationfee(self, value):
-        if value is not None and value < 0:
-            raise ValueError("Consultation fee cannot be negative.")
-        self._consultationfee = float(value or 0.0)
-
-    # medicineamount property
-    @property
-    def medicineamount(self):
-        return self._medicineamount
-
-    @medicineamount.setter
-    def medicineamount(self, value):
-        if value is not None and value < 0:
-            raise ValueError("Medicine amount cannot be negative.")
-        self._medicineamount = float(value or 0.0)
-
-    # labtestamount property
-    @property
-    def labtestamount(self):
-        return self._labtestamount
-
-    @labtestamount.setter
-    def labtestamount(self, value):
-        if value is not None and value < 0:
-            raise ValueError("Lab test amount cannot be negative.")
-        self._labtestamount = float(value or 0.0)
-
-    # totalamount property (computed, read-only)
-    @property
-    def totalamount(self):
-        return (
-            (self.consultationfee or 0.0) +
-            (self.medicineamount or 0.0) +
-            (self.labtestamount or 0.0)
-        )
-
-    # date property (read-only)
-    @property
-    def date(self):
-        return self._date
+    def __calculate_total(self):
+        """Automatically calculate total amount"""
+        self.__total_amount = self.__consultation_fee + self.__medicine_cost + self.__labtest_cost
 
     def __str__(self):
-        return (
-            f"Bill ID: {self.billingid} | "
-            f"Patient ID: {self.patientid} | "
-            f"Appointment ID: {self.appointmentid} | "
-            f"Date: {self.date.strftime('%Y-%m-%d %H:%M:%S')} | "
-            f"Consultation Fee: {self.consultationfee:.2f} | "
-            f"Medicine Amount: {self.medicineamount:.2f} | "
-            f"Lab Test Amount: {self.labtestamount:.2f} | "
-            f"Total Amount: {self.totalamount:.2f}"
-        )
+        return (f"BillID: {self.__bill_id}, PatientID: {self.__patient_id}, AppointmentID: {self.__appointment_id}, "
+                f"MedicinePrescriptionID: {self.__medicine_prescription_id}, LabTestPrescriptionID: {self.__labtest_prescription_id}, "
+                f"ConsultationFee: {self.__consultation_fee}, MedicineCost: {self.__medicine_cost}, "
+                f"LabTestCost: {self.__labtest_cost}, TotalAmount: {self.__total_amount}")

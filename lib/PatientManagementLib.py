@@ -4,11 +4,15 @@ from datetime import datetime
 class PatientManagementLib:
     @staticmethod
     def validate_name(name):
-        """Validate patient name - alphabetic characters only, minimum 3 characters"""
+        """Validate patient name - alphabetic characters only, minimum 3 characters, no multiple spaces"""
         if not name or not isinstance(name, str):
             return False
+        stripped = name.strip()
+        # Check for multiple consecutive spaces
+        if '  ' in stripped:
+            return False
         # Allow spaces and hyphens in names
-        return bool(re.match(r'^[a-zA-Z\s\-]+$', name.strip())) and len(name.strip()) >= 3
+        return bool(re.match(r'^[a-zA-Z\s\-]+$', stripped)) and len(stripped) >= 3
 
     @staticmethod
     def validate_mobile(mobile):
@@ -57,10 +61,14 @@ class PatientManagementLib:
 
     @staticmethod
     def validate_address(address):
-        """Validate address - non-empty string with reasonable length"""
+        """Validate address - non-empty string with reasonable length, no multiple spaces"""
         if not address or not isinstance(address, str):
             return False
-        return len(address.strip()) >= 5 and len(address.strip()) <= 200
+        stripped = address.strip()
+        # Check for multiple consecutive spaces
+        if '  ' in stripped:
+            return False
+        return 5 <= len(stripped) <= 200
 
     @staticmethod
     def validate_patient_id(patient_id):

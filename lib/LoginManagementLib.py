@@ -11,6 +11,9 @@ from lib.MedicineManagementLib import MedicineManagementLib
 # from lib.BillingManagementLib import BillingManagementLib
 from services.PatientService import PatientService
 from services.AppointmentService import AppointmentService
+from services.PatientService import PatientMenu
+from services.AppointmentService import AppointmentMenu
+from services.BillingService import BillMenu
 from models.Staff import Staff
 from models.Doctor import Doctor
 
@@ -223,29 +226,42 @@ class LoginManagementLib:
 
     @staticmethod
     def receptionist_menu():
-        while True:
-            print("\n--- Receptionist Dashboard ---")
-            print("1. Register Patient")
-            print('2.view all patient')
-            print("3. Book Appointment")
-            print("4. View Appointments")
-            print("5. Logout")
-            choice = input("Enter choice: ")
+            while True:
+                print("\n" + "="*50)
+                print("           RECEPTIONIST MANAGEMENT SYSTEM")
+                print("="*50)
+                print("1. Patient Management")
+                print("2. Appointment Management")
+                print("3. Bill Management")
+                print("0. Exit")
+                print("-"*50)
+                choice = input("Enter your choice (0-3): ").strip()
 
-            if choice == "1":
-                PatientService.add_patient()
-            elif choice == "2":
-                PatientService.list_patients()
-            elif choice == "3":
-                AppointmentService.book_appointment()
-            elif choice =="4":
-                AppointmentService.list_appointments()
-            elif choice == "5":
-                print("Logging out...")
-                break
-            else:
-                print("Invalid choice")
 
+                # Loop until valid choice is entered
+                while True:                    
+                # Handle exit first
+                    if choice == "0":
+                        print("Thank you for using the Receptionist Management System!")
+                        print("Goodbye!")
+                        return  # Exit the function
+                    
+                    # Handle management sections
+                    if choice == "1":
+                        PatientMenu.show_menu()
+                        break
+                    elif choice == "2":
+                        AppointmentMenu.show_menu()
+                        break
+                    elif choice == "3":
+                        BillMenu.show_menu()
+                        break
+                    else:
+                        print("Invalid choice. Please try again.")
+                        break
+
+
+        
     @staticmethod
     def labtech_menu():
         while True:
