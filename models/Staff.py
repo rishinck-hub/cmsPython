@@ -46,22 +46,26 @@ class Staff:
     def get_bloodgroup(self):
         return self.__bloodgroup
     def set_bloodgroup(self, bloodgroup):
-        valid_bloodgroups = {"A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"}
-        bloodgroup = bloodgroup.upper()  # normalize
-        if bloodgroup in valid_bloodgroups:
-          self.__bloodgroup = bloodgroup
-        else:
-          print("Invalid blood group! Please enter one of:", ", ".join(valid_bloodgroups))
-          bloodgroup = input("Enter Blood Group again:")
+        while True:
+            valid_bloodgroups = {"A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"}
+            bloodgroup = bloodgroup.upper()  # normalize
+            if bloodgroup in valid_bloodgroups:
+                self.__bloodgroup = bloodgroup
+                break
+            else:
+                print("Invalid blood group! Please enter one of:", ", ".join(valid_bloodgroups))
+                bloodgroup = input("Enter Blood Group again:")
 
     def get_mobileno(self):
         return self.__mobileno
     def set_mobileno(self, mobileno):
-        if re.fullmatch(r"[6-9]\d{9}", str(mobileno)):
-           self.__mobileno = mobileno
-        else:
-           print("Invalid mobile number! It must start with 6-9 and have exactly 10 digits.")
-           mobileno = input("Enter mobile no again:")
+        while True:
+            if re.fullmatch(r"[6-9]\d{9}", str(mobileno)):
+                self.__mobileno = mobileno
+                break
+            else:
+                print("Invalid mobile number! It must start with 6-9 and have exactly 10 digits.")
+                mobileno = input("Enter mobile no again:")
 
     def get_dob(self):
         return self.__dob
@@ -78,6 +82,7 @@ class Staff:
             return
         else:
            print("Give the date in the correct format (dd/mm/yyyy)")
+           print("Enter dob again:")
            return
 
     def __validate_date(self, date_str: str) -> bool:
@@ -96,20 +101,32 @@ class Staff:
     def get_username(self):
         return self.__username
     def set_username(self, username):
-        if len(username) >= 6:
+         if (len(username) >= 6 and
+            re.search(r'[A-Za-z]', username) and
+            re.search(r'\d', username) and
+            re.search(r'[^A-Za-z0-9]', username) and
+            username != "=" * len(username)):
             self.__username = username
-        else:
-            print("Username should have at least 6 characters")
-            username = input("Enter username again:")
+         else:
+            print(" Username should have at least 6 characters, "
+                  "contain letters, numbers, and a special character")
+            username = input("Enter username again: ")
+            self.set_username(username)
 
     def get_password(self):
         return self.__password
     def set_password(self, password):
-        if len(password) >= 6:
+        if (len(password) >= 6 and
+            re.search(r'[A-Za-z]', password) and
+            re.search(r'\d', password) and
+            re.search(r'[^A-Za-z0-9]', password) and
+            password != "=" * len(password)):
             self.__password = password
         else:
-            print("Password should have at least 6 characters")
-            password = input("Enter password again:")
+            print(" Password should have at least 6 characters, "
+                  "contain letters, numbers, and a special character ")
+            password = input("Enter password again: ")
+            self.set_password(password)
 
     def get_roleid(self):
         return self.__roleid

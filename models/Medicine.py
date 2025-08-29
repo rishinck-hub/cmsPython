@@ -1,6 +1,6 @@
 from datetime import date
 from services.MedicineService import MedicineService  # Import the service above
-
+from datetime import datetime
 class Medicine:
     """A class representing a medicine product with accompanying validation."""
 
@@ -18,6 +18,8 @@ class Medicine:
         self.__medicineid = medicineid
         self.medicinename = medicinename  # Calls the setter with validation
         self.__unitprice = unitprice
+        self.manufacturedate = manufacturedate
+        self.expirydate = expirydate
         self.__unitquantiy = unitquantiy
         self.__unitid = unitid
         self.__medicinecategoryid = medicinecategoryid
@@ -102,9 +104,15 @@ class Medicine:
 
     @manufacture_date.setter
     def manufacture_date(self, date_str):
-        #mfg = MedicineService.parse_date_str(date_str)
-        mfg = MedicineService.parse_date_str(date_str)
-        self.__manufacturedate = MedicineService.validate_manufacturedate(mfg)
+        # #mfg = MedicineService.parse_date_str(date_str)
+        # mfg = MedicineService.parse_date_str(date_str)
+        # self.__manufacturedate = MedicineService.validate_manufacturedate(mfg)
+        if date_str:
+            parsed_date = MedicineService.parse_date_str(date_str)
+            self.__manufacturedate = MedicineService.validate_manufacturedate(parsed_date)
+        else:
+            self.__manufacturedate = datetime.today()
+
 
     # Property: expiry_date
     @property
@@ -113,10 +121,15 @@ class Medicine:
 
     @expiry_date.setter
     def expiry_date(self, date_str):
-        exp = MedicineService.parse_date_str(date_str)
-        self.__expirydate = MedicineService.validate_expirydate(exp, self.__manufacturedate)
+        # exp = MedicineService.parse_date_str(date_str)
+        # self.__expirydate = MedicineService.validate_expirydate(exp, self.__manufacturedate)
+        if date_str:
+            parsed_date = MedicineService.parse_date_str(date_str)
+            self.__expirydate = MedicineService.validate_expirydate(parsed_date, self.__manufacturedate)
+        else:
+            self.__expirydate = datetime.today()
 
-    # Property: is_active
+    
     
     
     def __str__(self):

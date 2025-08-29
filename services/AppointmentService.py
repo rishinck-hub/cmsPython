@@ -3,6 +3,37 @@ from models.Appointment import Appointment
 from lib.AppointmentManagementLib import AppointmentManagementLib
 from db.db_connection import DBConnection
 
+class AppointmentMenu:
+    @staticmethod
+    def show_menu():
+        """Appointment Management submenu"""
+        while True:
+            print("\n" + "="*50)
+            print("         APPOINTMENT MANAGEMENT SYSTEM")
+            print("="*50)
+            print("1. Book Appointment")
+            print("2. List Appointments")
+            print("3. Update Appointment")
+            print("4. Cancel Appointment")
+            print("0. Return to Main Menu")
+            print("-"*50)
+            
+            choice = input("Enter your choice (0-4): ").strip()
+            
+            if choice == '1':
+                AppointmentService.book_appointment()
+            elif choice == '2':
+                AppointmentService.list_appointments()
+            elif choice == '3':
+                AppointmentService.update_appointment()
+            elif choice == '4':
+                AppointmentService.cancel_appointment()
+            elif choice == '0':
+                print("Returning to main menu...")
+                break
+            else:
+                print("❌ Invalid choice. Please enter a number between 0 and 4.")
+
 class AppointmentService:
     dao = AppointmentDaoImpl()
     appointment_counter = 1
@@ -94,10 +125,10 @@ class AppointmentService:
 
             # Get and validate status
             while True:
-                status = input("Enter status (Pending/Cancelled/Completed): ").strip()
+                status = input("Enter status (Pending/Cancelled/Completed/Confirmed): ").strip()
                 if AppointmentManagementLib.validate_status(status):
                     break
-                print("Error: Invalid status! Please enter Pending, Cancelled, or Completed.")
+                print("Error: Invalid status! Please enter Pending, Cancelled, Completed or Confirmed.")
                 print("Please try again.\n")
 
             # Get and validate patient ID, existence, and active status
@@ -191,12 +222,29 @@ class AppointmentService:
             if appointment_id:
                 print(f"Appointment booked successfully with ID: {appointment_id}")
                 print(f"Token {token} assigned to the patient.")
-                # Ask for payment confirmation before printing receipt
+                # Ask for payment confirmation and update status accordingly
                 paid = input("Has the consultation fee been received? (y/n): ").strip().lower()
                 if paid == 'y':
-                    AppointmentService._print_booking_receipt(appointment_id, patient_id, doctor_id, date, token, fee)
+                    # Update status to 'Confirmed' since payment is received
+                    conn = DBConnection().get_connection()
+                    cursor = None
+                    try:
+                        cursor = conn.cursor()
+                        cursor.execute(
+                            "UPDATE appointments SET status = 'Confirmed' WHERE appointmentid = %s",
+                            (appointment_id,)
+                        )
+                        conn.commit()
+                        print("Payment received. Appointment status updated to 'Confirmed'.")
+                        AppointmentService._print_booking_receipt(appointment_id, patient_id, doctor_id, date, token, fee)
+                    except Exception as e:
+                        print(f"Error updating appointment status: {e}")
+                        print("Appointment was booked but status could not be updated to 'Confirmed'.")
+                    finally:
+                        if cursor:
+                            cursor.close()
                 else:
-                    print("Payment not received yet. Receipt will not be printed.")
+                    print("Payment not received yet. Appointment remains as 'Pending'.")
             else:
                 print("Failed to book appointment. Please try again.")
                 return
