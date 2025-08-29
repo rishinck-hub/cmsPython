@@ -1,5 +1,8 @@
+from turtle import update
 from dao.MedicineDaoImpl import MedicineDaoDb
+from dao.MedicineStockDaoImpl import MedicineStockDaoDb
 from models.Medicine import Medicine
+from models.MedicineStock import MedicineStock  
 from datetime import datetime
 
 class MedicineManagementLib:
@@ -165,17 +168,18 @@ class MedicineManagementLib:
         else:
             print("Failed to delete the medicine.")
 
-    # @staticmethod
-    # def search_medicine():
-    #     """Search for medicines in the database."""
-    #     query = input("Enter the medicine name or category ID to search: ")
-    #     results = MedicineManagementLib.dao_service.search(query)
-    #     if results:
-    #         print("Search results:")
-    #         for med in results:
-    #             print(med)
-    #     else:
-    #         print("No medicines found.")
+    @staticmethod
+    def search_medicine():
+        """Search for medicines in the database."""
+        query = input("Enter the medicine name or Medicine ID to search: ")
+        results = MedicineManagementLib.dao_service.search(query)
+
+        if results:
+            print("Search results:")
+            for med in results:
+                print(med)
+        else:
+            print("No medicines found.")
 
     # @staticmethod
     # def apply_gst():
@@ -196,67 +200,124 @@ class MedicineManagementLib:
     #     else:
     #         print("Failed to disable the medicine.")
 
-# class MedicineStockManagementLib:
-#     @staticmethod
-#     def add_stock():
-#         """Add a new stock entry to the database with proper validations."""
-#         # Prompt for and validate the medicine ID
-#         medicinestockid = MedicineStockManagementLib.validate_input(
-#             "Enter the medicine stock ID: ", input_type=int)
+class MedicineStockManagementLib:
+    dao_service: MedicineStockDaoDb = MedicineStockDaoDb()
 
-#         # Validate the batch number (string)
-#         stockhand = input("Enter the batch stockhand: ").strip()
-#         if not stockhand:
-#             print("Error: Batch stockhand cannot be empty.")
-#             return
+    @staticmethod
+    def add_stock():
+        """Add a new stock entry to the database with proper validations."""
+
+        # Get and validate inputs
+        stockhand = MedicineStockManagementLib.validate_input("Enter stock hand quantity: ", int)
+        reorderlevel = MedicineStockManagementLib.validate_input("Enter reorder level: ", int)
+        purchase = MedicineStockManagementLib.validate_input("Enter purchase quantity: ", int)
+        issuance = MedicineStockManagementLib.validate_input("Enter issuance quantity: ", int)
+        medicineid = MedicineStockManagementLib.validate_input("Enter associated medicine ID: ", int)
+
+        # Optional: default to current date if createddate not entered
+        createddate_input = input("Enter created date (YYYY-MM-DD) or leave blank for today: ").strip()
+        if createddate_input:
+            try:
+                createddate = datetime.strptime(createddate_input, "%Y-%m-%d").date()
+            except ValueError:
+                print("Invalid date format. Please use YYYY-MM-DD.")
+                return
+        else:
+            createddate = datetime.today().date()
+
+        # Generate a stock ID (adjust logic as needed)
         
-#         # Validate numeric inputs (reorderlevel)
-#         try:
-#             reorderlevel = int(input("Enter the reorderlevel: ").strip())
-#         except ValueError as e:
-#             print("Invalid reorderlevel input:", e)
-#             return
 
-#         # Validate date inputs (stock date and expiry date)
-#         purchase = input("Enter stock date (YYYY-MM-DD): ").strip()
-#         expiry_date = input("Enter expiry date (YYYY-MM-DD): ").strip()
-#         try:
-#             stock_date = datetime.strptime(stock_date, "%Y-%m-%d").date()
-#             expiry_date = datetime.strptime(expiry_date, "%Y-%m-%d").date()
-#         except ValueError:
-#             print("Invalid date format. Please use YYYY-MM-DD.")
-#             return
+        # Create MedicineStock object
+        stock = MedicineStock(
+            stockhand=stockhand,
+            reorderlevel=reorderlevel,
+            purchase=purchase,
+            issuance=issuance,
+            medicineid=medicineid,
+            createddate=createddate
+        )
 
-#         # Initialize the MedicineStock instance after validating the inputs
-#         stock = MedicineStock()
-#         stock.medicineid = medicine_id
-#         stock.batchnumber = batch_number
-#         stock.quantity = quantity
-#         stock.stockdate = stock_date
-#         stock.expirydate = expiry_date
+        # Attempt insert
+        if MedicineStockManagementLib.dao_service.insert(stock):
+            print("Stock added successfully.")
+        else:
+            print("Failed to add the stock.")
 
-#         # Attempt database insert
-#         if MedicineStockManagementLib.dao_service.insert(stock):
-#             print("Stock added successfully.")
-#         else:
-#             print("Failed to add the stock.")
+    @staticmethod
+    def validate_input(prompt, input_type=str, is_required=True):
+        """Helper function to validate inputs (string, numeric, etc.)"""
+        while True:
+            try:
+                user_input = input(prompt).strip()
+                if is_required and not user_input:
+                    raise ValueError("This field cannot be empty.")
 
-#     @staticmethod
-#     def update_stock():
-#         """Update an existing stock entry in the database."""
-#         stock_id = MedicineStockManagementLib.validate_input(
-#             "Enter the stock ID to update: ", input_type=int)
-        
-#         # Find the stock record by ID
-#         stock = MedicineStockManagementLib.dao_service.find_by_id(stock_id)
-#         if not stock:
-#             print("Stock record not found.")
-#             return
-        
-#         print(f"Updating stock: {stock}")
+                if input_type == str:
+                    return user_input
+                elif input_type == float:
+                    return float(user_input)
+                elif input_type == int:
+                    return int(user_input)
+                else:
+                    raise ValueError(f"Unsupported input type {input_type}")
+            except ValueError as e:
+                print(f"Invalid input: {e}. Please try again.")
 
-#         # Validate and update the quantity, batch number, and expiry date
-#         quantity = MedicineStockManagementLib.validate_input("Enter new quantity: ", input_type=int, is_required=False)
+    @staticmethod
+    def update_stock():
+        """Update an existing stock entry in the database."""
+        stock_id = MedicineStockManagementLib.validate_input("Enter the stock ID to update: ", int)
+        stock = MedicineStockManagementLib.dao_service.find_by_id(stock_id)
+
+        if not stock:
+            print("Stock not found.")
+            return
+
+
+        print("Current stock details:", stock)
+        confirm = input("Do you want to update this stock? (Y/N): ").strip().lower()
+
+        if confirm != 'y':
+
+            print("Update cancelled.")
+            return
+
+        # Prompt for new values—example uses generic attribute names
+        new_stockhand = MedicineStockManagementLib.validate_input(
+            "Enter new stockhand (leave blank to keep current): "#, int, allow_empty=True
+        )
+        new_reorderlevel = MedicineStockManagementLib.validate_input(
+            "Enter new reorderlevel (leave blank to keep current): "#, int, allow_empty=True
+        )
+        new_purchase = MedicineStockManagementLib.validate_input(
+            "Enter new purchase (leave blank to keep current): "#, int, allow_empty=True
+        )
+        new_issuance = MedicineStockManagementLib.validate_input(
+            "Enter new issuance (leave blank to keep current): "#, int, allow_empty=True
+        )
+
+        # Update only the values the user provided
+        updates = {}
+        if new_stockhand is not None:
+            updates['stockhand'] = new_stockhand
+        if new_reorderlevel is not None:
+            updates['reorderlevel'] = new_reorderlevel
+        if new_purchase is not None:
+            updates['purchase'] = new_purchase
+        if new_issuance is not None:
+            updates['issuance'] = new_issuance
+
+        if not updates:
+            print("No changes entered. Update aborted.")
+            return
+
+        try:
+            MedicineStockManagementLib.dao_service.update(stock_id, **update)
+            print("Stock updated successfully.")
+        except Exception as e:
+            print(f"Failed to update stock: {e}")
+
 #         batch_number = input("Enter new batch number: ").strip() or stock.batchnumber
 #         expiry_date = input("Enter new expiry date (YYYY-MM-DD): ").strip() or str(stock.expirydate)
         
@@ -301,3 +362,12 @@ class MedicineManagementLib:
 #                 print(stock)
 #         else:
 #             print("No stock entries found for the search query.")
+    @staticmethod
+    def display_all_stock():
+        """Display all stock entries."""
+        stock_entries = MedicineStockManagementLib.dao_service.display_all_stock()
+        if stock_entries:
+            for stock in stock_entries:
+                print(stock)
+        else:
+            print("No stock entries found.")

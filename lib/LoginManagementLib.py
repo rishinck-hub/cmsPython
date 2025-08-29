@@ -3,7 +3,7 @@ from lib.staffManagementLib import StaffManagementLib
 from lib.DoctorManagementLib import DoctorManagementLib
 from lib.DoctorManagementLib import MedicinePrescriptionManagementLib
 from lib.DoctorManagementLib import ConsultationManagementLib
-from lib.staffManagementLib import StaffManagementLib, DoctorManagementLib
+from lib.staffManagementLib import StaffManagementLib, DoctorManageLib
 from lib.DoctorManagementLib import LabTestPrescriptionManagementLib
 # from lib.AppointmentManagementLib import AppointmentManagementLib
 # from lib.LabTestManagementLib import LabTestManagementLib
@@ -109,19 +109,20 @@ class LoginManagementLib:
 
                         action_choice = input("Enter your choice (1-3): ")
                         if action_choice == "1":
-                                edit_staff_menu(staff)
+                            LoginManagementLib.edit_staff_menu(staff)
                         elif action_choice == "2":
                             StaffManagementLib.disable_staff(staff)
                             break
                         elif action_choice == "3":
                             break
-                        else:
+                        else:  
                             print(" Invalid choice. Try again.")
             elif choice == "4":
                 break
             else:
                 print(" Invalid choice, try again!")
 
+    @staticmethod
     def edit_staff_menu(staff):
         while True:
             print("\n========= Edit Staff Menu =========")
@@ -144,7 +145,8 @@ class LoginManagementLib:
 
             else:
                 print(" Invalid choice. Try again.")
-                
+
+    @staticmethod            
     def doctor_management_menu():
         while True:
             print("\n============= DOCTOR MANAGEMENT MENU ==============")
@@ -157,16 +159,16 @@ class LoginManagementLib:
             choice = input("Enter your choice: ")
 
             if choice == "1":
-                DoctorManagementLib.add_doctor()
+                DoctorManageLib.add_doctor()
 
             elif choice == "2":
-                DoctorManagementLib.list_doctors()
+                DoctorManageLib.list_doctors()
 
             elif choice == "3":
-                DoctorManagementLib.search_doctor()
+                DoctorManageLib.search_doctor()
                 
             elif choice == "4":
-                DoctorManagementLib.disable_doctor()
+                DoctorManageLib.disable_doctor()
 
             elif choice == "5":
                 break
